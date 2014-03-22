@@ -9,6 +9,7 @@ import numpy
 from sklearn.cross_validation import cross_val_score
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.neighbors import KNeighborsClassifier
 
 
 __author__ = 'Nikolay Anokhin'
@@ -35,7 +36,8 @@ def normalise_document(doc):
     Returns:
         A normalised document as unicode
     """
-    return ''.join(c for c in unicodedata.normalize('NFD', doc.lower()) if not unicodedata.combining(c))
+    # TODO: Implement this
+    return doc
 
 
 def tokenize_document(doc, n):
@@ -45,11 +47,9 @@ def tokenize_document(doc, n):
     Returns:
         Generator of unicode n-grams
     """
-    tokenizer = nltk.WordPunctTokenizer()
-    for token in tokenizer.tokenize(doc):
-        if len(token) >= n:
-            for ngram in nltk.ngrams(token, n):
-                yield u"".join(ngram)
+    # TODO: Implement this
+    for token in ["abc", "def", "ghi"]:
+        yield token
 
 
 def select_features(lang_freq, top_tokens):
@@ -59,12 +59,8 @@ def select_features(lang_freq, top_tokens):
     Returns:
         set(unicode tokens)
     """
-    features = set()
-    for lang, (lid, token_freq) in lang_freq.iteritems():
-        sorted_token_freq = sorted(token_freq.iteritems(), key=operator.itemgetter(1), reverse=True)
-        for token, freq in sorted_token_freq[:top_tokens]:
-            features.add(token)
-    return features
+    # TODO: Implement this
+    return {"abc"}
 
 
 def keep_only_features(docs, features):
@@ -84,7 +80,8 @@ def create_model():
     Returns:
         Sklearn model instance
     """
-    return MultinomialNB()
+    # TODO: Implement this
+    return KNeighborsClassifier()
 
 
 def validate_model(model, x, y, folds=20):
