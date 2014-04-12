@@ -30,7 +30,7 @@ class Tree(object):
 
 
     def is_list_criteria(self, depth):
-        if depth < 3: # Maximum DEPTH
+        if depth < 6: # Maximum DEPTH
             return 0
         else:
             return 1
@@ -39,7 +39,7 @@ class Tree(object):
     #We divide all members into two classes
     #In first current attribute i < average of all, in second >=
     @staticmethod
-    def gini_impurity(self, X, y, depth):
+    def gini2(self, X, y, depth):
         if self.is_list_criteria(depth):
             self.create_list(X, y)
             return self
@@ -66,8 +66,8 @@ class Tree(object):
             temp.right = Tree()
             temp.type = 1
             temp.attribute = [i, s, impurity, None]
-            temp.left = temp.left.gini_impurity(temp.left, left, lefty, depth + 1)
-            temp.right = temp.right.gini_impurity(temp.right, right, righty, depth + 1)
+            temp.left = temp.left.gini2(temp.left, left, lefty, depth + 1)
+            temp.right = temp.right.gini2(temp.right, right, righty, depth + 1)
             temp.attribute[3] = impurity - len(right) / float(len(X)) * temp.right.attribute[2] - len(left) / float(len(X)) * temp.left.attribute[2]
             if temp.attribute[3] > self.attribute[3]:
                 self = temp
@@ -75,8 +75,52 @@ class Tree(object):
             self.create_list(X, y)
         return self
 
+    @staticmethod
+    def gini1(self, X, y,depth):
+         if self.is_list_criteria(depth):
+            self.create_list(X, y)
+            return self
+         self.type = 1
+         self.attribute[3] = -1
+         curattr = -1
+         curdelta = 0
+         curs = 0
+         for i in range(0, len(X[0])):
+            s = self.sum(X, i) / float(len(X))
+            impurity = 0
+            for j in range (0,len(X)):
+                impurity+=(X[j][i] - s)**2
+            if impurity > curdelta or curattr == -1:
+                curdelta = impurity
+                curs = s
+                curattr = i
+         left = []
+         lefty = []
+         right = []
+         righty = []
+         i = curattr
+         s = curs
+         for j in range(0, len(X)):
+             if X[j][i] < s:
+                 left.append(X[j])
+                 lefty.append(y[j])
+             else:
+                right.append(X[j])
+                righty.append(y[j])
+         if len(right) < 2 or len(left) < 2:
+             #print(depth)
+             self.create_list(X, y)
+             return self
+         self.left = Tree()
+         self.right = Tree()
+         self.type = 1
+         self.attribute = [i, s, impurity, None]
+         self.left = self.left.gini1(self.left, left, lefty, depth + 1)
+         self.right = self.right.gini1(self.right, right, righty, depth + 1)
+         return self
+
     def build_tree(self, X, y):
-        self = self.gini_impurity(self, X, y, 0)
+        self = self.gini1(self, X, y, 0) #HERE WE CHOOSE TYPE OF TREE - gini1 or gini2
         return self
 
     def fit(self, X, y):
